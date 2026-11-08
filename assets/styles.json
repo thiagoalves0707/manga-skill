@@ -1,0 +1,10 @@
+{
+  "shonen": "black and white Japanese shonen manga panel, bold confident ink lineart, dynamic camera angles, screentone shading, speed lines and impact effects during action, high contrast blacks, detailed backgrounds, professional published manga quality",
+  "shojo": "black and white Japanese shojo manga panel, delicate thin lineart, large sparkling expressive eyes, soft gradient screentones, flowers and sparkles as atmosphere, flowing hair, romantic dreamy mood, professional published manga quality",
+  "seinen": "black and white Japanese seinen manga panel, realistic proportions, heavy solid blacks, dense crosshatching, cinematic lighting and shadows, gritty mature tone, highly detailed rendering, professional published manga quality",
+  "chibi": "black and white Japanese gag manga panel, chibi super-deformed proportions, exaggerated comedic expressions, simple clean lineart, light screentones, playful energy",
+  "horror": "black and white Japanese horror manga panel, unsettling detailed linework, deep shadows, hatching textures, eerie atmosphere, uncanny faces, slow creeping dread",
+  "webtoon": "full color Korean webtoon panel, clean digital lineart, soft cel shading, vibrant harmonious colors, polished modern illustration",
+  "manga-color": "full color Japanese manga panel like a color page of a weekly magazine, clean ink lineart with soft watercolor-like coloring, screentone texture accents",
+  "comic": "American comic book panel, bold heavy inks, flat vivid colors, halftone dots, dramatic lighting, dynamic anatomy"
+}

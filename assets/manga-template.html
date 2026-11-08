@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="pt-BR" data-style="shonen">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mangá</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Special+Elite&family=Zen+Maru+Gothic:wght@500;900&display=swap" rel="stylesheet">
+<style>
+/* ================= ESTILOS (presets) =================
+   Cada estilo é só um bloco de variáveis. Para criar um novo,
+   copie um bloco, troque o nome e ajuste. */
+:root{
+  --paper:#fbfaf6; --ink:#121212; --skin:var(--paper); --bg:#1d1d1f;
+  --gutter:12px; --border:3px; --radius:0px;
+  --font:'Comic Neue',sans-serif; --sfx-font:'Bangers',cursive; --sfx-fill:#fff;
+  --bubble-w:2.5px;
+  --enter:slam .5s ease-out both;
+}
+[data-style="shojo"]{--paper:#fffafc;--ink:#3a2235;--border:1.5px;--radius:10px;--font:'Zen Maru Gothic',sans-serif;--sfx-fill:#ffe3ef;--bubble-w:1.5px;--enter:soft 1.1s ease both}
+[data-style="seinen"]{--paper:#e9e5db;--ink:#0a0a0a;--border:4px;--gutter:8px;--font:'Special Elite',monospace;--enter:slowfade 1.4s ease both}
+[data-style="chibi"]{--paper:#fff;--border:3px;--radius:22px;--gutter:16px;--sfx-fill:#ffd23f;--bubble-w:3px;--enter:bounce .6s cubic-bezier(.3,1.5,.5,1) both}
+[data-style="webtoon"]{--paper:#fff;--skin:#ffe2cc;--border:0px;--gutter:70px;--sfx-fill:#ffd23f;--enter:slideup .7s ease both}
+[data-style="comic"]{--paper:#fff3d1;--skin:#f7c9a0;--border:4px;--sfx-fill:#ffd23f;--bubble-w:3px;--enter:pop .35s cubic-bezier(.3,1.6,.5,1) both}
+
+/* ================= LAYOUT ================= */
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#eee;font-family:system-ui,sans-serif;padding:16px 16px 100px}
+.head{max-width:820px;margin:8px auto 0}
+.head h1{font-family:var(--sfx-font);font-size:clamp(34px,7vw,60px);letter-spacing:2px;margin:0;line-height:1}
+.head .meta{opacity:.65;margin-top:4px}
+.page{width:100%;max-width:820px;aspect-ratio:1/1.414;margin:22px auto;background:var(--paper);padding:clamp(10px,3vw,28px);display:grid;gap:var(--gutter);box-shadow:0 10px 40px #0009;position:relative}
+.pnum{position:absolute;bottom:4px;left:50%;translate:-50% 0;font:700 11px var(--font);color:var(--ink);opacity:.6}
+.strip{max-width:720px;margin:22px auto;background:var(--paper);display:flex;flex-direction:column;gap:var(--gutter);padding:40px 0}
+.panel{position:relative;border:var(--border) solid var(--ink);border-radius:var(--radius);overflow:hidden;background:var(--paper);min-height:0;min-width:0;container-type:inline-size}
+.strip .panel{width:100%}
+.panel.shaped{border:none;border-radius:0;overflow:visible}
+.panel .frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6;overflow:visible}
+.art{position:absolute;inset:0;width:100%;height:100%;display:block}
+img.art{object-fit:cover}
+
+/* ================= BALÕES ================= */
+.bubble{position:absolute;translate:-50% -50%;z-index:5;isolation:isolate;padding:.95em 1.35em;max-width:62%;
+  font:700 clamp(9px,3.3cqw,17px)/1.18 var(--font);text-align:center;color:var(--ink)}
+.bubble .shape{position:absolute;inset:0;width:100%;height:100%;z-index:-1;overflow:visible}
+.bubble .shape *{fill:var(--paper);stroke:var(--ink);stroke-width:var(--bubble-w);stroke-linejoin:round}
+.bubble.whisper .shape *{stroke-dasharray:5 4}
+.bubble.shout{font-family:var(--sfx-font);font-weight:400;letter-spacing:.5px;font-size:clamp(11px,4.4cqw,24px);padding:.4em .6em}
+.bubble.shout .shape{inset:-42% -30%;width:auto;height:auto}
+.bubble.narration{background:var(--paper);border:var(--bubble-w) solid var(--ink);padding:.45em .7em;text-align:left;font-weight:400;font-style:italic}
+.sfx{position:absolute;translate:-50% -50%;z-index:4;font-family:var(--sfx-font);line-height:.9;letter-spacing:2px;white-space:nowrap;color:var(--sfx-fill);pointer-events:none;
+  text-shadow:3px 3px 0 var(--ink),-3px 3px 0 var(--ink),3px -3px 0 var(--ink),-3px -3px 0 var(--ink),0 3px 0 var(--ink),3px 0 0 var(--ink),-3px 0 0 var(--ink),0 -3px 0 var(--ink),7px 7px 0 var(--ink)}
+
+/* ================= ANIMAÇÃO ================= */
+.panel:not(.in){opacity:0}
+.panel.in{animation:var(--enter)}
+.panel.in.shake{animation:var(--enter),shake .5s .15s}
+.panel.flash.in::after{content:'';position:absolute;inset:0;background:#fff;animation:flash .6s both;pointer-events:none;z-index:7}
+.motion .bubble:not(.in),.motion .sfx:not(.in){opacity:0}
+.motion .bubble.in{animation:pop .32s cubic-bezier(.3,1.6,.5,1) both}
+.motion .sfx.in{animation:stamp .3s cubic-bezier(.3,1.8,.5,1) both}
+.fx-focus,.fx-sparkle{transform-box:view-box;transform-origin:50% 50%}
+.motion .fx-speed{animation:streak .3s linear infinite}
+.motion .fx-speed.v{animation-name:streakv}
+.motion .fx-focus{animation:breathe .45s ease-in-out infinite alternate}
+.motion .fx-sparkle{animation:twinkle 1.6s ease-in-out infinite alternate}
+.motion .panel.in img.art{animation:kenburns 9s ease-out both}
+@keyframes kenburns{from{transform:scale(1.1)}}
+@keyframes slam{from{opacity:0;transform:scale(1.04)}}
+@keyframes soft{from{opacity:0;filter:brightness(1.7) blur(4px)}}
+@keyframes slowfade{from{opacity:0}}
+@keyframes bounce{0%{opacity:0;transform:scale(.6)}60%{transform:scale(1.05)}}
+@keyframes slideup{from{opacity:0;transform:translateY(50px)}}
+@keyframes pop{from{opacity:0;transform:scale(.4)}}
+@keyframes stamp{from{opacity:0;transform:scale(2.2) rotate(-8deg)}}
+@keyframes shake{20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}
+@keyframes flash{from{opacity:1}to{opacity:0}}
+@keyframes streak{to{transform:translateX(-40px)}}
+@keyframes streakv{to{transform:translateY(-40px)}}
+@keyframes breathe{to{transform:scale(1.04)}}
+@keyframes twinkle{to{opacity:.35}}
+
+/* ================= CONTROLES ================= */
+.controls{position:fixed;left:50%;bottom:14px;translate:-50% 0;display:flex;gap:6px;align-items:center;background:#000d;padding:7px;border-radius:999px;z-index:50;max-width:calc(100vw - 32px);flex-wrap:wrap;justify-content:center}
+.controls button,.controls select{font:600 13px system-ui;background:#2b2b2e;color:#fff;border:1px solid #444;border-radius:999px;padding:7px 13px;cursor:pointer}
+.controls button:hover{background:#3a3a3e}
+body:not(.motion) .mo{display:none}
+@media print{
+  body{background:#fff;padding:0}.controls,.head{display:none}
+  .page{box-shadow:none;margin:0 auto;break-after:page}
+  .panel,.bubble,.sfx{opacity:1!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<!-- Retículas (screentones) reutilizáveis: fill:url(#tone-dots) etc. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="tone-dots" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="3" cy="3" r="1.35" style="fill:var(--ink)"/></pattern>
+  <pattern id="tone-light" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="2.5" cy="2.5" r=".8" style="fill:var(--ink)"/></pattern>
+  <pattern id="tone-dark" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><circle cx="2.5" cy="2.5" r="1.9" style="fill:var(--ink)"/></pattern>
+  <pattern id="tone-hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" style="stroke:var(--ink);stroke-width:1.2"/></pattern>
+  <pattern id="tone-cross" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0,0V6M0,0H6" style="stroke:var(--ink);stroke-width:1"/></pattern>
+</defs></svg>
+
+<main id="book"></main>
+
+<nav class="controls">
+  <select id="style" aria-label="Estilo">
+    <option value="shonen">Shōnen</option><option value="shojo">Shōjo</option><option value="seinen">Seinen</option>
+    <option value="chibi">Chibi / Comédia</option><option value="webtoon">Webtoon</option><option value="comic">Comic</option>
+  </select>
+  <button id="mode">▶ Animar</button>
+  <button id="prev" class="mo" aria-label="Voltar">◀</button>
+  <button id="next" class="mo" aria-label="Avançar">▶</button>
+  <button id="auto" class="mo">Auto</button>
+</nav>
+
+<script>
+/* =====================================================================
+   ROTEIRO — normalmente só este bloco muda.
+   ===================================================================== */
+/*STORY:BEGIN*/
+const STORY = { title: "Template vazio", author: "Rode scripts/build.mjs para montar um mangá", style: "shonen", format: "pages", motion: false,
+  pages: [{ grid: { areas: ["a"], cols: "1fr", rows: "1fr" }, panels: [{ area: "a", bubbles: [{ type: "narration", text: "Este é o template. O build.mjs injeta a história aqui.", x: 50, y: 50 }] }] }] };
+/*STORY:END*/
+
+/* =====================================================================
+   MOTOR — helpers de desenho (h.*) + renderização + animação.
+   Coordenadas dos helpers são no viewBox do painel (vb).
+   IMPORTANTE: var(--x) só funciona dentro de style="", nunca em fill="".
+   ===================================================================== */
+const H = (() => {
+  let s = 7, uid = 0;
+  const r = () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const f = v => +v.toFixed(1);
+  const L = (w = 3) => `stroke:var(--ink);stroke-width:${w};stroke-linejoin:round;stroke-linecap:round`;
+  const P = (d, fill = 'none', w = 3) => `<path d="${d}" style="fill:${fill};${L(w)}"/>`;
+  return {
+    rnd: r, seed(n) { s = n; }, f, P,
+    tone(x, y, w, h, kind = 'dots') { return `<rect x="${x}" y="${y}" width="${w}" height="${h}" style="fill:url(#tone-${kind})"/>`; },
+    fill(x, y, w, h, color = 'var(--ink)') { return `<rect x="${x}" y="${y}" width="${w}" height="${h}" style="fill:${color}"/>`; },
+    sky(c1, c2, o = {}) { const id = 'g' + (++uid); return `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${c1}"/><stop offset="1" style="stop-color:${c2}"/></linearGradient></defs><rect width="${o.w || 400}" height="${o.h || 300}" style="fill:url(#${id})"/>`; },
+    focus(cx = 200, cy = 150, o = {}) {
+      const n = o.n || 110, inner = o.inner || 90, R = 900; let d = '';
+      for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 + r() * .05, w = .006 + r() * .014, ri = inner + r() * 70;
+        d += `M${f(cx + Math.cos(a - w) * R)},${f(cy + Math.sin(a - w) * R)}L${f(cx + Math.cos(a) * ri)},${f(cy + Math.sin(a) * ri)}L${f(cx + Math.cos(a + w) * R)},${f(cy + Math.sin(a + w) * R)}Z`; }
+      return `<path class="fx-focus" d="${d}" style="fill:${o.color || 'var(--ink)'}"/>`;
+    },
+    speed(o = {}) {
+      const v = o.dir === 'v', W = o.w || 400, Hh = o.h || 300, n = o.n || 45; let d = '';
+      for (let i = 0; i < n; i++) { const a = r() * (v ? W : Hh), b = -60 + r() * (v ? Hh : W) * .7, len = 120 + r() * 380, t = .4 + r() * 2.2;
+        const p = v ? [[a, b], [a - t, b + len], [a + t, b + len]] : [[b, a], [b + len, a - t], [b + len, a + t]];
+        d += `M${p.map(q => q.map(f).join(',')).join('L')}Z`; }
+      return `<g class="fx-speed${v ? ' v' : ''}"><path d="${d}" style="fill:${o.color || 'var(--ink)'}"/></g>`;
+    },
+    sparkle(n = 12, o = {}) {
+      const W = o.w || 400, Hh = o.h || 300; let g = '';
+      for (let i = 0; i < n; i++) { const x = f(r() * W), y = f(r() * Hh), k = 4 + r() * 12, a = f(k), b = f(k * .7);
+        g += `<path d="M${x},${f(y - a)}Q${x},${y} ${f(x + b)},${y}Q${x},${y} ${x},${f(y + a)}Q${x},${y} ${f(x - b)},${y}Q${x},${y} ${x},${f(y - a)}Z" style="fill:var(--paper);stroke:var(--ink);stroke-width:1"/>`; }
+      return `<g class="fx-sparkle">${g}</g>`;
+    },
+    rain(n = 60, o = {}) {
+      const W = o.w || 400, Hh = o.h || 300; let d = '';
+      for (let i = 0; i < n; i++) { const x = r() * (W + 100), y = r() * Hh, l = 15 + r() * 30; d += `M${f(x)},${f(y)}l${f(-l * .3)},${f(l)}`; }
+      return `<path class="fx-speed v" d="${d}" style="fill:none;${L(1)}"/>`;
+    },
+    city(base = 240, o = {}) {
+      const W = o.w || 400; let g = '', x = -10;
+      while (x < W + 10) { const w = 26 + r() * 44, h = 50 + r() * (o.max || 150);
+        g += `<rect x="${f(x)}" y="${f(base - h)}" width="${f(w)}" height="${f(h + 2)}" style="fill:${o.fill || 'var(--ink)'}"/>`;
+        for (let wy = base - h + 8; wy < base - 8; wy += 12) for (let wx = x + 5; wx < x + w - 6; wx += 9)
+          if (r() > .55) g += `<rect x="${f(wx)}" y="${f(wy)}" width="4" height="6" style="fill:${o.win || 'var(--paper)'}"/>`;
+        x += w + 1 + r() * 4; }
+      return g;
+    },
+    /* Busto de personagem estilo mangá. Origem = centro do rosto; ocupa ~y -95..118 com s=1.
+       hair: spiky | short | long     expr: neutral | smile | angry | determined | sad | shock */
+    chara(o = {}) {
+      const { x = 200, y = 160, s = 1, flip = false, hair = 'spiky', expr = 'neutral', hairFill = 'var(--ink)',
+              shirt = 'var(--paper)', blush = false, sweat = false, body = true } = o;
+      let g = '';
+      if (hair === 'long') g += P('M-46,-25 Q-54,-82 0,-82 Q54,-82 46,-25 L56,80 Q30,72 18,58 L-18,58 Q-30,72 -56,80Z', hairFill);
+      if (body) g += P('M-12,38 L-12,64 Q-56,70 -80,118 L80,118 Q56,70 12,64 L12,38Z', shirt) + P('M-12,64 L0,82 L12,64');
+      g += P('M-38,-22 Q-40,26 -6,52 Q0,56 6,52 Q40,26 38,-22 Q36,-62 0,-62 Q-36,-62 -38,-22Z', 'var(--skin)');
+      g += `<path d="M-12,47 Q0,60 12,47 L12,56 Q0,66 -12,56Z" style="fill:url(#tone-dots)"/>`;
+      for (const sx of [-1, 1]) {
+        const cx = 17 * sx, out = cx + 11 * sx, inn = cx - 11 * sx;
+        if (expr === 'smile') g += P(`M${cx - 10},4 Q${cx},-7 ${cx + 10},4`, 'none', 4);
+        else if (expr === 'shock') g += P(`M${out},-3 Q${cx},-11 ${inn},-3`, 'none', 3.5) + `<circle cx="${cx}" cy="4" r="7.5" style="fill:#fff;${L(2)}"/><circle cx="${cx}" cy="4" r="1.8" style="fill:var(--ink)"/>`;
+        else {
+          const hard = expr === 'angry' || expr === 'determined', rx = hard ? 4.8 : 6, ry = hard ? 6.5 : 8.5;
+          g += P(hard ? `M${out},-4 Q${cx},-6 ${inn},1` : `M${out},-1 Q${cx},-10 ${inn},-3`, 'none', 4.5);
+          g += `<ellipse cx="${cx}" cy="5" rx="${rx}" ry="${ry}" style="fill:var(--ink)"/><circle cx="${cx + 2.5}" cy="1" r="2.3" style="fill:#fff"/><circle cx="${cx - 2.2}" cy="9" r="1.1" style="fill:#fff"/>`;
+          if (!hard) g += P(`M${cx - 5},15 L${cx + 5},15`, 'none', 1.5);
+        }
+      }
+      g += P('M2,14 L-1,20 L3,20', 'none', 2);
+      const mouth = { neutral: P('M-5,31 Q0,32 5,31'), smile: P('M-9,27 Q0,37 9,27'), sad: P('M-7,33 Q0,27 7,33'),
+        determined: P('M-7,31 L7,30'), shock: `<ellipse cx="0" cy="33" rx="5" ry="7.5" style="fill:var(--ink)"/>`,
+        angry: P('M-10,27 Q0,23 10,27 Q8,40 0,41 Q-8,40 -10,27Z', 'var(--ink)') + P('M-8,28.5 Q0,26 8,28.5', 'none', 1.5).replace('stroke:var(--ink)', 'stroke:#fff') };
+      g += mouth[expr] || mouth.neutral;
+      if (blush) for (const sx of [-1, 1]) g += `<ellipse cx="${24 * sx}" cy="19" rx="8" ry="4" style="fill:var(--blush,#f4a6b8);opacity:.55"/>` + P(`M${24 * sx - 6},21 l3,-5 M${24 * sx - 1},21 l3,-5 M${24 * sx + 4},21 l3,-5`, 'none', 1.2);
+      const front = {
+        spiky: 'M-44,-10 L-56,-40 L-38,-45 L-48,-78 L-20,-62 L-10,-95 L6,-66 L30,-90 L30,-58 L56,-62 L40,-34 L52,-12 L36,-20 L30,-40 L16,-24 L4,-44 L-8,-24 L-20,-40 L-30,-20 L-36,-34Z',
+        short: 'M-42,-12 Q-48,-72 0,-74 Q48,-72 42,-12 L36,-28 L28,-14 L22,-34 L10,-20 L4,-38 L-8,-22 L-16,-36 L-26,-16 L-32,-30Z',
+        long: 'M-42,-8 Q-46,-74 0,-74 Q46,-74 42,-8 L34,-30 L24,-16 L16,-36 L4,-22 L-6,-38 L-16,-20 L-26,-34 L-34,-14Z' };
+      g += P(front[hair] || front.spiky, hairFill);
+      const brow = { neutral: [-16, -17], smile: [-18, -18], angry: [-22, -11], determined: [-22, -12], sad: [-14, -22], shock: [-22, -25] }[expr] || [-16, -17];
+      for (const sx of [-1, 1]) { const cx = 17 * sx; g += P(`M${cx + 10 * sx},${brow[0]} Q${cx},${(brow[0] + brow[1]) / 2 - 2} ${cx - 10 * sx},${brow[1]}`, 'none', /angry|determined/.test(expr) ? 4.5 : 3); }
+      if (sweat) g += P('M36,-36 Q44,-24 39,-19 Q32,-21 36,-36Z', '#fff', 2);
+      return `<g transform="translate(${x},${y}) scale(${flip ? -s : s},${s})">${g}</g>`;
+    },
+  };
+})();
+
+function bubbleEl(b) {
+  const t = b.type || 'speech', d = document.createElement('div');
+  d.className = 'bubble ' + t; d.style.left = b.x + '%'; d.style.top = b.y + '%';
+  if (b.w) d.style.width = b.w + '%'; if (b.size) d.style.fontSize = b.size;
+  d.innerHTML = `<span class="txt">${b.text}</span>`;
+  const f = H.f;
+  if (t === 'shout') {
+    const N = b.spikes || 16, pts = [];
+    for (let i = 0; i < N * 2; i++) { const a = i / (N * 2) * Math.PI * 2, rr = i % 2 ? 33 + H.rnd() * 6 : 49; pts.push(f(50 + Math.cos(a) * rr) + ',' + f(50 + Math.sin(a) * rr)); }
+    d.insertAdjacentHTML('afterbegin', `<svg class="shape" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon points="${pts.join(' ')}" vector-effect="non-scaling-stroke"/></svg>`);
+  } else if (t !== 'narration') {
+    // tip = ponta do rabicho em % da caixa do balão (ex.: [20,125] = embaixo à esquerda). tail:false = sem rabicho
+    const tip = b.tail === false ? null : (b.tip || [50, 128]);
+    let shape;
+    if (!tip) shape = `<ellipse cx="50" cy="50" rx="49" ry="49" vector-effect="non-scaling-stroke"/>`;
+    else if (t === 'thought') {
+      const ax = 50 + (tip[0] - 50) * .9, ay = tip[1] > 50 ? 100 : 0, dir = tip[1] > 50 ? 1 : -1;
+      shape = `<ellipse cx="50" cy="50" rx="49" ry="49" vector-effect="non-scaling-stroke"/>` +
+        [[.25, 9], [.6, 6], [1, 4]].map(([k, rad]) => `<ellipse cx="${f(ax + (tip[0] - ax) * k)}" cy="${f(ay + dir * 6 + (tip[1] - ay - dir * 6) * k)}" rx="${rad * .7}" ry="${rad}" vector-effect="non-scaling-stroke"/>`).join('');
+    } else {
+      const a0 = Math.atan2(tip[1] - 50, tip[0] - 50), dl = .2, R = 49;
+      const A = [50 + Math.cos(a0 - dl) * R, 50 + Math.sin(a0 - dl) * R].map(f), B = [50 + Math.cos(a0 + dl) * R, 50 + Math.sin(a0 + dl) * R].map(f);
+      shape = `<path d="M${A} A${R} ${R} 0 1 0 ${B} L${tip}Z" vector-effect="non-scaling-stroke"/>`;
+    }
+    d.insertAdjacentHTML('afterbegin', `<svg class="shape" viewBox="0 0 100 100" preserveAspectRatio="none">${shape}</svg>`);
+  }
+  return d;
+}
+
+function renderPanel(p, idx, webtoon) {
+  const el = document.createElement('div');
+  el.className = 'panel' + (p.fx ? ' ' + p.fx : '');
+  const vb = p.vb || '0 0 400 300';
+  if (!webtoon && p.area) el.style.gridArea = p.area;
+  if (webtoon) { const [, , w, h] = vb.split(/\s+/).map(Number); el.style.aspectRatio = p.ratio || `${w}/${h}`; }
+  if (p.bg) el.style.background = p.bg;
+  H.seed(p.seed ?? idx * 97 + 13);
+  if (p.img) el.insertAdjacentHTML('beforeend', `<img class="art" src="${p.img}" alt="" style="object-position:${p.pos || 'center'}">`);
+  if (p.art) el.insertAdjacentHTML('beforeend', `<svg class="art" viewBox="${vb}" preserveAspectRatio="${p.fit || 'xMidYMid slice'}">${typeof p.art === 'function' ? p.art(H) : p.art}</svg>`);
+  if (p.shape && !webtoon) {
+    el.classList.add('shaped');
+    el.querySelectorAll('.art').forEach(a => a.style.clipPath = `polygon(${p.shape.map(([x, y]) => `${x}% ${y}%`).join(',')})`);
+    el.insertAdjacentHTML('beforeend', `<svg class="frame" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon points="${p.shape.map(q => q.join(',')).join(' ')}" style="fill:none;stroke:var(--ink);stroke-width:var(--border);stroke-linejoin:miter" vector-effect="non-scaling-stroke"/></svg>`);
+  }
+  (p.sfx || []).forEach(s => { const e = document.createElement('div'); e.className = 'sfx'; e.innerHTML = s.text;
+    e.style.cssText = `left:${s.x}%;top:${s.y}%;font-size:${s.size || '9cqw'};rotate:${s.rot || 0}deg;${s.color ? 'color:' + s.color : ''}`; el.appendChild(e); });
+  (p.bubbles || []).forEach(b => el.appendChild(bubbleEl(b)));
+  return el;
+}
+
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
+let mode = (new URLSearchParams(location.search).get('motion') === '1' || STORY.motion) ? 'motion' : 'static', step = -1, autoT = null;
+const $ = id => document.getElementById(id);
+const panels = () => [...document.querySelectorAll('.panel')];
+
+function render() {
+  document.documentElement.dataset.style = STORY.style; document.title = STORY.title; $('style').value = STORY.style;
+  const book = $('book'), webtoon = STORY.format === 'webtoon';
+  book.innerHTML = `<header class="head"><h1>${STORY.title}</h1><div class="meta">${[STORY.author, STORY.chapter].filter(Boolean).join(' · ')}</div></header>`;
+  let n = 0;
+  STORY.pages.forEach((pg, pi) => {
+    const el = document.createElement('section'); el.className = webtoon ? 'strip' : 'page';
+    if (!webtoon) { el.style.gridTemplateAreas = pg.grid.areas.map(a => `"${a}"`).join(' '); el.style.gridTemplateColumns = pg.grid.cols || '1fr'; el.style.gridTemplateRows = pg.grid.rows || `repeat(${pg.grid.areas.length},1fr)`; }
+    pg.panels.forEach(p => el.appendChild(renderPanel(p, n++, webtoon)));
+    if (!webtoon) el.insertAdjacentHTML('beforeend', `<span class="pnum">${pi + 1}</span>`);
+    book.appendChild(el);
+  });
+  setMode(mode);
+}
+
+function reveal(p) {
+  p.classList.add('in');
+  p.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  p.querySelectorAll('.sfx').forEach(e => setTimeout(() => e.classList.add('in'), 250));
+  p.querySelectorAll('.bubble').forEach((e, j) => setTimeout(() => e.classList.add('in'), 550 + j * 750));
+}
+function hide(p) { p.classList.remove('in'); p.querySelectorAll('.in').forEach(e => e.classList.remove('in')); }
+function next() { const ps = panels(); if (step < ps.length - 1) reveal(ps[++step]); else stopAuto(); }
+function prev() { const ps = panels(); if (step > 0) hide(ps[step--]); }
+function stopAuto() { clearTimeout(autoT); autoT = null; $('auto').textContent = 'Auto'; }
+function auto() {
+  if (autoT) return stopAuto();
+  $('auto').textContent = '❚❚';
+  const tick = () => { next(); const p = panels()[step]; if (!p || step >= panels().length - 1) { autoT = setTimeout(stopAuto, 100); return; }
+    autoT = setTimeout(tick, 1500 + p.querySelectorAll('.bubble').length * 1300); };
+  tick();
+}
+function setMode(m) {
+  mode = m; stopAuto(); step = -1; io.disconnect();
+  document.body.classList.toggle('motion', m === 'motion');
+  $('mode').textContent = m === 'motion' ? '■ Estático' : '▶ Animar';
+  panels().forEach(hide);
+  if (m === 'static') panels().forEach(p => io.observe(p));
+  else { window.scrollTo({ top: 0 }); setTimeout(next, 300); }
+}
+
+$('mode').onclick = () => setMode(mode === 'motion' ? 'static' : 'motion');
+$('next').onclick = next; $('prev').onclick = prev; $('auto').onclick = auto;
+$('style').onchange = e => { STORY.style = e.target.value; STORY.format = e.target.value === 'webtoon' ? 'webtoon' : 'pages'; render(); };
+document.addEventListener('keydown', e => { if (mode !== 'motion') return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft') prev(); });
+$('book').addEventListener('click', () => { if (mode === 'motion') next(); });
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{
+  "title": "O Último Trem",
+  "author": "Exemplo da skill /manga",
+  "chapter": "Cap. 1 — Estação Yomi",
+  "style": "shonen",
+  "format": "pages",
+  "setting": "modern Tokyo at night, around midnight",
+  "characters": [
+    { "id": "kaito", "name": "Kaito", "look": "17-year-old Japanese boy, messy spiky black hair, sharp determined eyes, small bandage on his right cheek, black high-school gakuran uniform with open collar, long red scarf, slim athletic build" },
+    { "id": "mei", "name": "Mei", "look": "17-year-old Japanese girl, long straight platinum-white hair with blunt bangs and a small crescent-moon hairclip, calm half-lidded eyes, navy sailor school uniform with a white ribbon, slender" }
+  ],
+  "pages": [
+    { "layout": "abertura3", "panels": [
+      { "area": "a", "prompt": "Establishing shot of a dense Tokyo cityscape at night with an elevated train line, a commuter train with glowing windows crossing the frame, quiet streets, neon signs without readable text", "shot": "wide establishing shot, slightly high angle", "space": "top left",
+        "bubbles": [{ "type": "narration", "text": "Tóquio, 23:57.<br>O último trem da noite.", "x": 20, "y": 14 }],
+        "sfx": [{ "text": "GOOOO", "x": 78, "y": 70, "size": "7cqw", "rot": -6 }] },
+      { "area": "b", "chars": ["kaito"], "prompt": "Kaito sprinting down the stairs of a train station, scarf flying behind him, sweat drops, desperate face, motion blur speed lines", "shot": "dynamic low angle, medium shot", "space": "right",
+        "bubbles": [{ "text": "Não, não, não...!", "x": 82, "y": 25, "w": 26, "tip": [10, 120] }],
+        "sfx": [{ "text": "TAP TAP TAP", "x": 25, "y": 80, "size": "6cqw", "rot": -10 }] },
+      { "area": "c", "prompt": "Extreme close-up of a station wall clock showing 11:58, a single drop of sweat falling in the foreground", "shot": "extreme close-up", "space": "left",
+        "sfx": [{ "text": "TIC", "x": 18, "y": 40, "size": "8cqw", "rot": 8 }] }
+    ]},
+    { "layout": "classico4", "panels": [
+      { "area": "a", "prompt": "Empty train platform at night, a single train waiting with its doors starting to close, warning lights flashing", "shot": "wide shot along the platform, one-point perspective", "space": "top",
+        "sfx": [{ "text": "PI-PI-PI", "x": 70, "y": 22, "size": "6cqw", "rot": -4 }] },
+      { "area": "b", "chars": ["kaito"], "prompt": "Kaito screaming while running, arm stretched forward, intense eyes, scarf whipping", "shot": "close-up, slightly from below, foreshortened hand toward camera", "space": "top",
+        "bubbles": [{ "type": "shout", "text": "ESPERA!!", "x": 30, "y": 18 }] },
+      { "area": "c", "chars": ["mei"], "prompt": "Mei inside the train calmly stopping the closing doors with one hand, looking out at the viewer with a slight mysterious smile", "shot": "medium close-up through the closing doors", "space": "top right",
+        "sfx": [{ "text": "GAKK", "x": 22, "y": 78, "size": "8cqw", "rot": 10 }] },
+      { "area": "d", "chars": ["kaito", "mei"], "prompt": "Kaito diving through the train doors and crashing onto the train floor, exhausted, while Mei stands above him looking down", "shot": "wide dynamic diagonal shot inside the train car", "fx": "shake", "space": "top left",
+        "bubbles": [{ "text": "Ufa... consegui...", "x": 18, "y": 18, "w": 28, "tip": [60, 130] }],
+        "sfx": [{ "text": "THUD", "x": 75, "y": 75, "size": "10cqw", "rot": -8 }] }
+    ]},
+    { "layout": "tensao4", "panels": [
+      { "area": "a", "chars": ["kaito"], "prompt": "Kaito sitting on the train bench catching his breath, head tilted back, relieved", "shot": "medium shot", "space": "top",
+        "bubbles": [{ "text": "Valeu... Se eu perdesse esse trem, minha mãe me matava.", "x": 50, "y": 18, "w": 70, "tip": [50, 130] }] },
+      { "area": "b", "chars": ["mei"], "prompt": "Mei sitting across, chin resting on her hand, calm unreadable smile, train windows dark behind her", "shot": "medium close-up", "space": "top",
+        "bubbles": [{ "text": "Atrasado de novo, Kaito?", "x": 50, "y": 16, "w": 60, "tip": [55, 130] }] },
+      { "area": "c", "prompt": "Train window: the city lights outside abruptly disappear into total darkness, reflection of the empty car on the glass", "shot": "narrow horizontal strip, close on the window", "space": "right",
+        "sfx": [{ "text": "VUUUM", "x": 80, "y": 50, "size": "6cqw", "rot": 0 }] },
+      { "area": "d", "chars": ["kaito", "mei"], "prompt": "Kaito suddenly tense, staring at the station display above the door with growing horror; behind him Mei keeps smiling, her eyes hidden in shadow", "shot": "over-the-shoulder medium shot, dramatic shadows", "space": "top",
+        "bubbles": [
+          { "type": "narration", "text": "“Próxima estação...”", "x": 22, "y": 12 },
+          { "type": "thought", "text": "Peraí... como ela sabe meu nome?", "x": 74, "y": 18, "w": 40, "tip": [30, 140] }
+        ] }
+    ]},
+    { "layout": "splash", "panels": [
+      { "area": "a", "chars": ["mei"], "prompt": "The train arrives at an impossible ghostly station: endless rows of red torii gates, floating paper lanterns, mist, a giant pale moon; Mei stands on the platform turning back toward the viewer with an eerie gentle smile, her white hair glowing", "shot": "grand splash page, low angle, epic scale", "space": "top", "fx": "flash",
+        "bubbles": [
+          { "type": "narration", "text": "Próxima estação: <b>YOMI</b>.", "x": 50, "y": 8 },
+          { "text": "Bem-vindo, Kaito. Estávamos te esperando.", "x": 70, "y": 22, "w": 36, "tip": [20, 140] }
+        ] }
+    ]}
+  ]
+}

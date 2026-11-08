@@ -1,0 +1,9 @@
+# NUNCA suba sua chave
+.env
+.env.*
+!.env.example
+
+# arquivos gerados
+examples/*/img/
+examples/*/index.html
+node_modules/
