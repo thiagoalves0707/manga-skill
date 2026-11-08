@@ -1,16 +1,16 @@
 ---
 name: manga
-description: Transforma uma história em mangá de verdade (ex.: 4 páginas) com arte gerada por IA (Gemini) — Claude escreve o roteiro, quebra em páginas e quadros, gera fichas de personagem para consistência, gera cada quadro, e monta as páginas em HTML com balões, onomatopeias e modo animado. Vários estilos (shōnen, shōjo, seinen, chibi, terror, webtoon, mangá colorido, comic) e estilos novos. Use quando o usuário pedir mangá, HQ, quadrinho, gibi, webtoon, tirinha, ou "transformar uma história em quadrinhos".
+description: Transforma uma história em mangá de verdade (ex.: 4 páginas) com arte gerada por IA (Cloudflare grátis ou Gemini) — Claude escreve o roteiro, quebra em páginas e quadros, gera fichas de personagem para consistência, gera cada quadro, e monta as páginas em HTML com balões, onomatopeias e modo animado. Vários estilos (shōnen, shōjo, seinen, chibi, terror, webtoon, mangá colorido, comic) e estilos novos. Use quando o usuário pedir mangá, HQ, quadrinho, gibi, webtoon, tirinha, ou "transformar uma história em quadrinhos".
 ---
 
 # Mangá com IA (história → páginas prontas)
 
-Divisão de trabalho: **você** é roteirista, diretor de cena e letreirista. O **Gemini** desenha.
+Divisão de trabalho: **você** é roteirista, diretor de cena e letreirista. A IA de imagem (Cloudflare ou Gemini) desenha.
 O motor HTML monta páginas, balões (texto limpo, em qualquer idioma) e animação.
 
 ```
 skill/
-  scripts/gen.mjs        gera fichas de personagem + cada quadro (Gemini, Node 18+, sem dependências)
+  scripts/gen.mjs        gera fichas + quadros (gemini | cloudflare; Node 18+, sem dependências)
   scripts/build.mjs      story.json + img/ → index.html
   assets/layouts.json    layouts de página e proporção de cada quadro
   assets/styles.json     prompt de estilo de arte por estilo
@@ -18,14 +18,24 @@ skill/
   examples/ultimo-trem/  exemplo completo de 4 páginas
 ```
 
-## Pré-requisito
-`GEMINI_API_KEY` no ambiente ou num `.env` (pasta do projeto, pasta atual ou pasta da skill).
-Sem chave: oriente o usuário a criar em https://aistudio.google.com/apikey e salvar no `.env`
-ele mesmo. **Nunca peça para colar a chave no chat.**
-Modelos de imagem **não têm cota gratuita** (erro 429 "free_tier ... limit: 0"): o projeto da chave
-precisa de faturamento ativo no AI Studio. O gen.mjs detecta isso e para com aviso.
-Modelo padrão `gemini-3.1-flash-image` (Nano Banana 2). Rode `node gen.mjs --list-models` e, se existir um modelo de
-imagem melhor (ex.: `*-pro-image*`), use `--model` ou `"model"` no story.json.
+## Pré-requisito: gerador de imagem (credenciais do PRÓPRIO usuário)
+Credenciais no ambiente ou num `.env` (pasta do projeto, pasta atual ou pasta da skill); modelo em `.env.example`.
+**Nunca peça para colar chave/token no chat** — o usuário edita o `.env` ele mesmo.
+
+| gerador | credenciais | custo | consistência |
+|---|---|---|---|
+| `cloudflare` (FLUX.1 schnell) | `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN` | grátis, cota diária | só por texto; imagem quadrada (o layout recorta) |
+| `gemini` (Nano Banana 2) | `GEMINI_API_KEY` + faturamento ativo | ~US$1 / 4 páginas | fichas de personagem como referência visual |
+
+Escolha automática: gemini se houver chave, senão cloudflare; force com `IMAGE_PROVIDER` ou `--provider`.
+O gen.mjs para com aviso claro em: chave ausente/de exemplo, Gemini sem faturamento (429 limit 0),
+cota grátis da Cloudflare esgotada (renova diariamente; rodar de novo continua de onde parou).
+`node gen.mjs --list-models` lista modelos; troque com `--model`.
+
+**No cloudflare** (sem referência visual): escreva o `look` de cada personagem bem marcante e
+idêntico em todo quadro (cor/forma do cabelo, acessório único, roupa), prefira menos personagens por
+quadro, e mantenha o assunto no centro (a imagem quadrada é recortada para a proporção do quadro).
+Pule o passo de fichas.
 
 ## Workflow
 1. **Briefing** (pergunte só o que faltar): história, nº de páginas (padrão 4), estilo, formato
@@ -34,7 +44,7 @@ imagem melhor (ex.: `*-pro-image*`), use `--model` ou `"model"` no story.json.
    p1 ambientação + apresentação · p2 incidente/ação · p3 diálogo/tensão · p4 virada/clímax (splash ou `climax`).
    Termine com gancho. Cada página: escolha um layout em `layouts.json` pelo ritmo (campo `uso`).
 3. **Escrever `story.json`** numa pasta própria do projeto (ver esquema abaixo e `examples/ultimo-trem`).
-4. **Fichas primeiro:** `node <skill>/scripts/gen.mjs <pasta> --only chars`. Abra cada ficha (Read na
+4. **Fichas primeiro (só gemini):** `node <skill>/scripts/gen.mjs <pasta> --only chars`. Abra cada ficha (Read na
    imagem). Se o visual não bater com a descrição, ajuste `look` e regenere (`--force --only chars`).
    As fichas são a âncora de consistência; não siga com ficha ruim.
 5. **Quadros:** `node <skill>/scripts/gen.mjs <pasta>` (rodar em background; ~10–30 s por quadro).
